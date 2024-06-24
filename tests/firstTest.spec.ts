@@ -52,8 +52,35 @@ test.describe.only('Locators: ', () => {
 
     //assert that check box is checked
     await expect(basicForm.getByRole('checkbox')).toBeChecked()
+  })
 
+  test('Extracting Values', async ({ page }) => {
+    //testing a single value
+    const basicForm = page.locator('nb-card', { hasText: 'Basic form' });
+    //use textContent method to get the content of that element
+    const buttonValue = await basicForm.getByRole('button').textContent();
+    //assert that the button has the right content
+    await expect(buttonValue).toEqual('Submit');
 
+    //testing multiple values
+    const usingTheGrid = page.locator("nb-card", { hasText: "Using the Grid" });
+    //get ALL the values of the the non unqie elements - note the getbyrole locator only returns the actual rado button, not the lables associated with them... thats a bummer
+    // const allRadioButtonValues = await usingTheGrid.getByRole('radio').allTextContents(); //this does not work... returns array of empty strings
+    const allRadioButtonValues = await usingTheGrid.locator('nb-radio').allTextContents()
+    //assert that one of the button values has the text option
+    console.log('🐞~~🐞~~🐞~~ all radio values ~~~> ', allRadioButtonValues)
+    //note - toContain does not support regex
+    expect(allRadioButtonValues).toContain('Option 1');
+
+    //testing input values
+    const emailInput = basicForm.getByRole('textbox', { name: 'Email' })
+    await emailInput.fill('email')
+    expect(emailInput).toHaveValue('email')
+
+    //testing element attributes
+    //expect(emailInput).toHaveAttribute('placeholder', { name: "Email" })// this doesnt work because name isnt the attribute and we need to extract the value
+    const placeholderValue = await emailInput.getAttribute('placeholder')
+    expect(placeholderValue).toEqual('Email')
   })
 
 })
