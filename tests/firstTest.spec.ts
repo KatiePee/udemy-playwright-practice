@@ -41,4 +41,19 @@ test.describe.only('Locators: ', () => {
     //seems like we should work down.. not up - so find something uniwue about the parent element then do something with its children
   })
 
+  test('Resusing locators', async ({ page }) => {
+    //find the unique parent element that we are going to reuse and asign it to a constant
+    const basicForm = page.locator('nb-card', { hasText: 'Basic form' })
+    //chain on the rest for the locators using that const
+    await basicForm.getByRole('textbox', { name: 'Email' }).fill('email@email.com')
+    await basicForm.getByRole('textbox', { name: 'Password' }).fill('password123')
+    await basicForm.locator('nb-checkbox').click()
+    await basicForm.getByRole('button').click()
+
+    //assert that check box is checked
+    await expect(basicForm.getByRole('checkbox')).toBeChecked()
+
+
+  })
+
 })
