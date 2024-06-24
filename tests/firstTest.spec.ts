@@ -28,6 +28,17 @@ test.describe.only('Locators: ', () => {
     // the '*' wild card, when used directly with + * then it selects the immediate next sibling regarless of type
     // input[placeholder="Email"] - selcts the input that is a child of the sibling element selected by + *
     await page.locator(':text-is("Using the Grid") + * input[placeholder="Email"]').click()
+    //try to avoid using this way because sometimes the order of the elements can be changed
+    //its best to try to find unique elements by selectors not indexies 
+    await page.locator('nb-card').nth(1).getByRole('button', { name: "Sign In" }).click()
+  })
+
+  test('Locating parent elements ', async ({ page }) => {
+    await page.locator("nb-card", { hasText: "Using the Grid" }).getByRole('textbox', { name: 'Email' }).click()
+    //first we can find the parent element using locators that make it uniwue - then we can chain on the child element that we are looking for
+    // we can also filter the parent elements by something that makes it unique. 
+    await page.locator('nb-card').filter({ hasText: 'Check me out' }).getByRole('textbox', { name: 'Email' }).click()
+    //seems like we should work down.. not up - so find something uniwue about the parent element then do something with its children
   })
 
 })
